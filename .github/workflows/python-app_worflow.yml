@@ -1,0 +1,42 @@
+name: Build Flask App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5  # Récupère le code du dépôt
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Mise en cache des dépendances pip
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      # Définir les variables d'environnement Flask
+      - name: Configurer Flask
+        run: |
+          export FLASK_APP=app.py
+          export FLASK_ENV=testing
+
+      - name: Lancer les tests Flask
+        run: pytest --maxfail=1 --disable-warnings -q
