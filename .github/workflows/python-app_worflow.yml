@@ -18,10 +18,25 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # Version de Python utilisée
+          python-version: '3.11'
+
+      # Mise en cache des dépendances pip
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Installer les dépendances
-        run: pip install -r requirements.txt  # Installe les packages Python nécessaires
+        run: pip install -r requirements.txt
+
+      # Définir les variables d'environnement Flask
+      - name: Configurer Flask
+        run: |
+          export FLASK_APP=app.py
+          export FLASK_ENV=testing
 
       - name: Lancer les tests Flask
-        run: pytest  # Exécute les tests
+        run: pytest --maxfail=1 --disable-warnings -q
