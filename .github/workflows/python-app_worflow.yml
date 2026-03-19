@@ -12,14 +12,16 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5  # Récupère le code du dépôt
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Run Flask tests
-        run: pytest
+          python-version: '3.11'  # Version de Python utilisée
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt  # Installe les packages Python nécessaires
+
+      - name: Lancer les tests Flask
+        run: pytest  # Exécute les tests
